@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=1">
+<meta name="theme-color" content="#111111">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/404.css') }}">
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://knife.media/wp-content/themes/knife/assets/images/icon-32.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="https://knife.media/wp-content/themes/knife/assets/images/icon-192.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="https://knife.media/wp-content/themes/knife/assets/images/icon-180.png" />
+
+<title>The page is not found &#8212; knife.media</title>
+
+</head>
+
+<body>
+    <div class="wrap">
+        <video class="video" poster="https://knife.media/wp-content/themes/knife/assets/images/poster-error.jpg" autoplay preload loop muted>
+            <source src="https://knife.media/wp-content/themes/knife/assets/video/video-error.mp4" type="video/mp4">
+        </video>
+
+        <div class="message">
+            <h1>Nothing found</h1>
+            <p>Better go to the <a href="{{ url_for('get_unique_short_id') }}" target="_blank">main page</a><br> and read something fresh.</p>
+        </div>
+    </div>
+</body>
+</html>
