@@ -1,40 +1,42 @@
+from http import HTTPStatus
+
 from flask import render_template, jsonify
 
 from . import app, db
+from .models import URLMap
 
 
 class InvalidAPIUsage(Exception):
-    # Если статус-код для ответа API не указан - вернется код 400
-    satus_code = 400
-    # Конструктор класса InvalidAPIUsage принимает на вход
-    # текст сообщения и статус код ошибки (необязательно)
 
-    def __init__(self, message, status_code=None) -> None:
-        super().__init__()
+    def __init__(self, message, status_code=None):
         self.message = message
-        # Если статус-код передан в конструктор -
-        # этот код вернется в ответе
-        if status_code is not None:
-            self.satus_code = status_code
+        self.status_code = status_code if status_code else HTTPStatus.BAD_REQUEST
 
-    # метод для сериализации переданного сообщения об ошибк
     def to_dict(self):
         return dict(message=self.message)
 
+    def from_dict(self, data):
+        setattr(self, 'original', data['url'])
+        setattr(self, 'short', data['custom_id'])
 
-# Обработчик кастомного исключения для API
+
 @app.errorhandler(InvalidAPIUsage)
 def invalid_api_usage(error):
-    # Возвращает в ответе текст ошибки и статус-код
     return jsonify(error.to_dict()), error.status_code
 
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template('404.html'), 404
+    return render_template('error.html', error_message='Нет такой страницы'), HTTPStatus.NOT_FOUND
 
 
 @app.errorhandler(500)
 def internal_error(error):
     db.session.rollback()
-    return render_template('500.html'), 500
+    return render_template('error.html', error_message='Ошибка сервера'), HTTPStatus.INTERNAL_SERVER_ERROR
+
+
+def check_inique_short_url(custom_id):
+    if URLMap.query.filter_by(short=custom_id).first():
+        return custom_id
+    return None
