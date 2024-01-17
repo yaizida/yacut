@@ -17,4 +17,3 @@ def check_custom(custom_id):
         if symbol not in CHARACTERS:
             return False
     return True
-
