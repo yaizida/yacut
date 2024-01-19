@@ -18,3 +18,10 @@ class URLMap(db.Model):
     def from_dict(self, data):
         setattr(self, 'original', data['url'])
         setattr(self, 'short', data['custom_id'])
+
+    @staticmethod
+    def get(custom_id):
+        return URLMap.query.filter_by(short=custom_id).first()
+
+    def save(self, custom_id):
+        pass

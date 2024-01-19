@@ -1,19 +1,12 @@
+import re
 import random
-import string
 
-CHARACTERS = string.ascii_letters + string.digits
+from . import CHARACTERS
 
 
 def random_string():
-    random_id = ''
-    for _ in range(6):
-        random_id += random.choice(CHARACTERS)
-    return random_id
+    return ''.join(random.choices(CHARACTERS, k=6))
 
 
 def check_custom(custom_id):
-    # На сколько релевнтно здесь реализоывть Бинарный поиск?
-    for symbol in custom_id:
-        if symbol not in CHARACTERS:
-            return False
-    return True
+    return True if re.search(r'^[A-Za-z0-9]{,6}$', custom_id) else False

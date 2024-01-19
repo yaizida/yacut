@@ -37,6 +37,6 @@ def internal_error(error):
 
 
 def check_inique_short_url(custom_id):
-    if URLMap.query.filter_by(short=custom_id).first():
+    if URLMap.get(custom_id):
         return custom_id
     return None

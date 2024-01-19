@@ -23,9 +23,10 @@ def add_url():
         data['custom_id'] = random_string()
 
     custom_id = data['custom_id']
+
+    # При переносе в models импорт error_handler конфликтует и теряет самумодель
     if len(custom_id) > 16 or not check_custom(custom_id):
         raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
-
     if check_inique_short_url(custom_id):
         raise InvalidAPIUsage('Предложенный вариант короткой ссылки уже существует.', HTTPStatus.BAD_REQUEST)
 
@@ -38,7 +39,6 @@ def add_url():
 
 @app.route('/api/id/<string:short_id>/', methods=['GET'])
 def get_original_url(short_id):
-    url = URLMap.query.filter_by(short=short_id).first()
-    if url is None:
+    if URLMap.get(short_id) is None:
         raise InvalidAPIUsage('Указанный id не найден', HTTPStatus.NOT_FOUND)
-    return jsonify({'url': url.original}), HTTPStatus.OK
+    return jsonify({'url': URLMap.get(short_id).original}), HTTPStatus.OK
