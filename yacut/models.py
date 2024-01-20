@@ -23,5 +23,7 @@ class URLMap(db.Model):
     def get(custom_id):
         return URLMap.query.filter_by(short=custom_id).first()
 
-    def save(self, custom_id):
-        pass
+    @staticmethod
+    def save(data):
+        db.session.add(data)
+        db.session.commit()

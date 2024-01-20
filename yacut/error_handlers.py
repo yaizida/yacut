@@ -3,7 +3,6 @@ from http import HTTPStatus
 from flask import render_template, jsonify
 
 from . import app, db
-from .models import URLMap
 
 
 class InvalidAPIUsage(Exception):
@@ -27,16 +26,12 @@ def invalid_api_usage(error):
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template('error.html', error_message='Нет такой страницы'), HTTPStatus.NOT_FOUND
+    return render_template('error.html',
+                           error_message='Нет такой страницы'), HTTPStatus.NOT_FOUND
 
 
 @app.errorhandler(500)
 def internal_error(error):
     db.session.rollback()
-    return render_template('error.html', error_message='Ошибка сервера'), HTTPStatus.INTERNAL_SERVER_ERROR
-
-
-def check_inique_short_url(custom_id):
-    if URLMap.get(custom_id):
-        return custom_id
-    return None
+    return render_template('error.html',
+                           error_message='Ошибка сервера'), HTTPStatus.INTERNAL_SERVER_ERROR

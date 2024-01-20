@@ -1,9 +1,9 @@
 from flask import render_template, flash, redirect, abort
 
-from . import app, db, BASE_URL
+from . import app, BASE_URL
 from .forms import URLMapForm
 from .models import URLMap
-from .utils import random_string, check_custom
+from .utils import random_string, validate_custom_id
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -13,17 +13,16 @@ def get_unique_short_id():
         short = form.custom_id.data
         if not short:
             short = random_string()
-        if short and not check_custom(short):
+        if short and not validate_custom_id(short):
             flash('Допустимые символы: A-z, 0-9')
-        if URLMap.query.filter_by(short=short).first():
+        if URLMap.get(short):
             flash('Предложенный вариант короткой ссылки уже существует.')
             return render_template('url_cut.html', form=form)
         url_map = URLMap(
             original=form.original_link.data,
             short=short,
         )
-        db.session.add(url_map)
-        db.session.commit()
+        URLMap.save(url_map)
         return render_template('url_cut.html', form=form,
                                short=BASE_URL + short)
     return render_template('url_cut.html', form=form)
@@ -31,7 +30,6 @@ def get_unique_short_id():
 
 @app.route('/<string:short>', methods=['GET'])
 def redirect_url(short):
-    link = URLMap.query.filter_by(short=short).first()
-    if link is None:
+    if URLMap.get(short) is None:
         abort(404)
-    return redirect(link.original)
+    return redirect(URLMap.get(short).original)
