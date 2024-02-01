@@ -27,11 +27,13 @@ def invalid_api_usage(error):
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('error.html',
-                           error_message='Нет такой страницы'), HTTPStatus.NOT_FOUND
+                           error_message='Нет такой страницы'
+                           ), HTTPStatus.NOT_FOUND
 
 
 @app.errorhandler(500)
 def internal_error(error):
     db.session.rollback()
     return render_template('error.html',
-                           error_message='Ошибка сервера'), HTTPStatus.INTERNAL_SERVER_ERROR
+                           error_message='Ошибка сервера'
+                           ), HTTPStatus.INTERNAL_SERVER_ERROR
