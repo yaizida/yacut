@@ -1,7 +1,7 @@
 import re
 import random
 
-from . import CHARACTERS
+from . import CHARACTERS, CHEK_PATTERN
 
 
 def random_string(length=6):
@@ -9,4 +9,4 @@ def random_string(length=6):
 
 
 def validate_custom_id(custom_id):
-    return True if re.search(r'^[A-Za-z0-9]{,16}$', custom_id) else False
+    return True if re.search(CHEK_PATTERN, custom_id) else False

@@ -1,6 +1,9 @@
 from datetime import datetime
+from http import HTTPStatus
 
 from . import db, BASE_URL
+from .error_handlers import InvalidAPIUsage
+from .utils import validate_custom_id
 
 
 class URLMap(db.Model):
@@ -25,5 +28,10 @@ class URLMap(db.Model):
 
     @staticmethod
     def save(data):
+        if not validate_custom_id(data.short):
+            raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
+        if URLMap.get(data.short):
+            raise InvalidAPIUsage('Предложенный вариант короткой ссылки уже существует.',
+                                  HTTPStatus.BAD_REQUEST)
         db.session.add(data)
         db.session.commit()

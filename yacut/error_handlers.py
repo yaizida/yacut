@@ -15,8 +15,8 @@ class InvalidAPIUsage(Exception):
         return dict(message=self.message)
 
     def from_dict(self, data):
-        setattr(self, 'original', data['url'])
-        setattr(self, 'short', data['custom_id'])
+        self.short = data['custom_id']
+        self.original = data['url']
 
 
 @app.errorhandler(InvalidAPIUsage)

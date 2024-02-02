@@ -5,7 +5,7 @@ from flask import jsonify, request
 from . import app  # BASE_URL
 from .error_handlers import InvalidAPIUsage
 from .models import URLMap
-from .utils import random_string, validate_custom_id
+from .utils import random_string
 
 
 @app.route('/api/id/', methods=['POST'])
@@ -15,19 +15,12 @@ def add_url():
     if data is None:
         raise InvalidAPIUsage('Отсутствует тело запроса')
 
-    if 'url' not in data or 'url' == "":
+    if 'url' not in data or not 'url':
         raise InvalidAPIUsage('\"url\" является обязательным полем!', HTTPStatus.BAD_REQUEST)
 
+    # Перенести в метод save
     if 'custom_id' not in data or data['custom_id'] is None:
         data['custom_id'] = random_string()
-
-    custom_id = data['custom_id']
-
-    if not validate_custom_id(custom_id):
-        raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
-    if URLMap.get(custom_id):
-        raise InvalidAPIUsage('Предложенный вариант короткой ссылки уже существует.',
-                              HTTPStatus.BAD_REQUEST)
 
     url = URLMap()
     url.from_dict(data)
