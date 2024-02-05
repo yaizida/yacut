@@ -3,7 +3,7 @@ from http import HTTPStatus
 
 from . import db, BASE_URL
 from .error_handlers import InvalidAPIUsage
-from .utils import validate_custom_id
+from .utils import validate_custom_id, random_string
 
 
 class URLMap(db.Model):
@@ -18,9 +18,14 @@ class URLMap(db.Model):
             short_link=BASE_URL + self.short,
         )
 
-    def from_dict(self, data):
-        self.short = data['custom_id']
-        self.original = data['url']
+    @staticmethod
+    def from_dict(data):
+        instance = URLMap()
+        if 'custom_id' not in data:
+            data['custom_id'] = ''
+        instance.short = data['custom_id']
+        instance.original = data['url']
+        return instance
 
     @staticmethod
     def get(custom_id):
@@ -28,6 +33,8 @@ class URLMap(db.Model):
 
     @staticmethod
     def save(data):
+        if not data.short:
+            data.short = random_string()
         if not validate_custom_id(data.short):
             raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
         if URLMap.get(data.short):
@@ -35,3 +42,4 @@ class URLMap(db.Model):
                                   HTTPStatus.BAD_REQUEST)
         db.session.add(data)
         db.session.commit()
+        return data

@@ -5,7 +5,6 @@ from flask import jsonify, request
 from . import app  # BASE_URL
 from .error_handlers import InvalidAPIUsage
 from .models import URLMap
-from .utils import random_string
 
 
 @app.route('/api/id/', methods=['POST'])
@@ -18,13 +17,7 @@ def add_url():
     if 'url' not in data or not 'url':
         raise InvalidAPIUsage('\"url\" является обязательным полем!', HTTPStatus.BAD_REQUEST)
 
-    # Перенести в метод save
-    if 'custom_id' not in data or data['custom_id'] is None:
-        data['custom_id'] = random_string()
-
-    url = URLMap()
-    url.from_dict(data)
-    url.save(url)
+    url = URLMap.save(URLMap.from_dict(data))
     return jsonify(url.to_dict()), HTTPStatus.CREATED
 
 
