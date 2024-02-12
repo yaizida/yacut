@@ -8,6 +8,8 @@ from settings import Config
 CHARACTERS = string.ascii_letters + string.digits
 BASE_URL = 'http://localhost/'
 MAX_LENGTH = 16
+RANDOM_LENGTH = 6
+# А как если мне нужны буквально фигурные скобки ?
 CHEK_PATTERN = r'^[A-Za-z0-9]{,' + str(MAX_LENGTH) + r'}$'
 
 #Application & DB

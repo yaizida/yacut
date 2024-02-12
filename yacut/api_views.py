@@ -17,6 +17,8 @@ def add_url():
     if 'url' not in data or not 'url':
         raise InvalidAPIUsage('\"url\" является обязательным полем!', HTTPStatus.BAD_REQUEST)
 
+    # url_map = URLMap.from_dict(data)
+    # url_map.save()
     url = URLMap.save(URLMap.from_dict(data))
     return jsonify(url.to_dict()), HTTPStatus.CREATED
 
