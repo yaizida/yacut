@@ -13,9 +13,10 @@ def get_unique_short_id():
         if URLMap.get(short):
             flash('Предложенный вариант короткой ссылки уже существует.')
             return render_template('url_cut.html', form=form)
-        url_map = URLMap(
-            original=form.original_link.data,
-            short=short,
+        url_map = URLMap.from_dict(
+            {'custom_id': short,
+             'url': form.original_link.data
+             }
         )
         url_maping = URLMap.save(url_map)
         return render_template('url_cut.html', form=form,
