@@ -18,9 +18,9 @@ def get_unique_short_id():
              'url': form.original_link.data
              }
         )
-        url_maping = URLMap.save(url_map)
+        url_map.save()
         return render_template('url_cut.html', form=form,
-                               short=BASE_URL + url_maping.short)
+                               short=BASE_URL + url_map.short)
     return render_template('url_cut.html', form=form)
 
 

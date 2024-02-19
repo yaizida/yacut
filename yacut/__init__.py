@@ -9,8 +9,7 @@ CHARACTERS = string.ascii_letters + string.digits
 BASE_URL = 'http://localhost/'
 MAX_LENGTH = 16
 RANDOM_LENGTH = 6
-# А как если мне нужны буквально фигурные скобки ?
-CHEK_PATTERN = r'^[A-Za-z0-9]{,' + str(MAX_LENGTH) + r'}$'
+CHEK_PATTERN = fr'^[A-Za-z0-9]{{1,{MAX_LENGTH}}}$'
 
 #Application & DB
 app = Flask(__name__)

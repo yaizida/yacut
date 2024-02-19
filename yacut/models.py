@@ -1,11 +1,13 @@
 from datetime import datetime
 from http import HTTPStatus
+import re
+import random
 
 from flask import flash
 
 from . import db, BASE_URL
 from .error_handlers import InvalidAPIUsage
-from .utils import validate_custom_id, random_string
+from . import CHARACTERS, CHEK_PATTERN, RANDOM_LENGTH
 
 
 class URLMap(db.Model):
@@ -34,16 +36,23 @@ class URLMap(db.Model):
         return URLMap.query.filter_by(short=custom_id).first()
 
     @staticmethod
-    def save(data):
-        if not data.short:
-            data.short = random_string()
-        # А если нам прилетит в save не сгенерированая ссылка ?
-        if not validate_custom_id(data.short):
+    def random_string(length=RANDOM_LENGTH):
+        return ''.join(random.choices(CHARACTERS, k=length))
+
+    @staticmethod
+    def validate_custom_id(custom_id):
+        return bool(re.search(CHEK_PATTERN, custom_id))
+
+    def save(self):
+        if not self.short:
+            self.short = self.random_string()
+        # А если нам прилетит в save не сгенерированая ссылка, а кастомная пользователя ?
+        if not self.validate_custom_id(self.short):
             flash('Допустимые символы: A-z, 0-9')
             raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
-        if URLMap.get(data.short):
+        if URLMap.get(self.short):
             raise InvalidAPIUsage('Предложенный вариант короткой ссылки уже существует.',
                                   HTTPStatus.BAD_REQUEST)
-        db.session.add(data)
+        db.session.add(self)
         db.session.commit()
-        return data
+        return self
