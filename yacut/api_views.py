@@ -14,7 +14,7 @@ def add_url():
     if data is None:
         raise InvalidAPIUsage('Отсутствует тело запроса')
 
-    if 'url' not in data or not 'url':
+    if 'url' not in data:
         raise InvalidAPIUsage('\"url\" является обязательным полем!', HTTPStatus.BAD_REQUEST)
 
     url_map = URLMap.from_dict(data)
