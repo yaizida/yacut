@@ -53,6 +53,7 @@ class URLMap(db.Model):
         else:
             self.short = self.random_string()
         if URLMap.get(self.short):
+            # В методе random_string теперь не могут быть сгенерированы одинковые урлы
             raise InvalidAPIUsage('Предложенный вариант короткой ссылки уже существует.',
                                   HTTPStatus.BAD_REQUEST)
         db.session.add(self)
