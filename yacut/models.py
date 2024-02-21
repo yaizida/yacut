@@ -1,10 +1,8 @@
 from datetime import datetime
-from http import HTTPStatus
 import re
 import random
 
 from . import db, BASE_URL
-from .error_handlers import InvalidAPIUsage
 from . import CHARACTERS, CHEK_PATTERN, RANDOM_LENGTH
 
 
@@ -35,11 +33,11 @@ class URLMap(db.Model):
 
     @staticmethod
     def random_string(length=RANDOM_LENGTH):
-        existing_ids = {url for url in URLMap.query.all()}
-        while True:
-            new_short_id = ''.join(random.choices(CHARACTERS, k=length))
-            if new_short_id not in existing_ids:
-                return new_short_id
+        new_short_id = ''.join(random.choices(CHARACTERS, k=length))
+        if URLMap.get(new_short_id):
+            raise ValueError('Сгенерированная ссылка уже сущетвует' +
+                             '\n Порпробуйте снова')
+        return new_short_id
 
     @staticmethod
     def validate_custom_id(custom_id):
@@ -48,14 +46,11 @@ class URLMap(db.Model):
     def save(self):
         if self.short:
             if not self.validate_custom_id(self.short):
-                # Если кидаю дпугую то ругаюатся тесты
-                raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
+                raise ValueError('Указано недопустимое имя для короткой ссылки')
         else:
             self.short = self.random_string()
         if URLMap.get(self.short):
-            # В методе random_string теперь не могут быть сгенерированы одинковые урлы
-            raise InvalidAPIUsage('Предложенный вариант короткой ссылки уже существует.',
-                                  HTTPStatus.BAD_REQUEST)
+            raise ValueError('Предложенный вариант короткой ссылки уже существует.')
         db.session.add(self)
         db.session.commit()
         return self

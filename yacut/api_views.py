@@ -18,7 +18,10 @@ def add_url():
         raise InvalidAPIUsage('\"url\" является обязательным полем!', HTTPStatus.BAD_REQUEST)
 
     url_map = URLMap.from_dict(data)
-    url_map.save()
+    try:
+        url_map.save()
+    except ValueError as error:
+        raise InvalidAPIUsage(error.args[0], HTTPStatus.BAD_REQUEST)
     return jsonify(url_map.to_dict()), HTTPStatus.CREATED
 
 

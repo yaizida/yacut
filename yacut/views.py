@@ -3,7 +3,6 @@ from flask import render_template, flash, redirect, abort
 from . import app, BASE_URL
 from .forms import URLMapForm
 from .models import URLMap
-from .error_handlers import InvalidAPIUsage
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -18,8 +17,8 @@ def get_unique_short_id():
         )
         try:
             url_map.save()
-        except InvalidAPIUsage as error:
-            flash(error)
+        except ValueError as error:
+            flash(error.args[0])
         return render_template('url_cut.html', form=form,
                                short=BASE_URL + url_map.short)
     return render_template('url_cut.html', form=form)
